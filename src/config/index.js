@@ -1,7 +1,7 @@
 const config = {
-  width: 600,
-  height: 150,
-  backgroundColor: "#000",
+  width: 400,
+  height: 600,
+  backgroundColor: "#66CBFF",
   fontFamily: "Permanent Marker",
 };
 

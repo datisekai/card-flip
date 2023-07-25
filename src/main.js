@@ -5,6 +5,7 @@ import Bootstrap from "./scene/Bootstrap";
 import Play from "./scene/Play";
 import configDefault from "./config";
 import GameOver from "./scene/Gameover";
+import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
 const { width, height, backgroundColor } = configDefault;
 
@@ -21,6 +22,18 @@ const config = {
     },
   },
   scene: [Preload, Bootstrap, Play, GameOver],
+  plugins: {
+    scene: [{
+        key: 'rexUI',
+        plugin: UIPlugin,
+        mapping: 'rexUI'
+    },
+    // ...
+    ]
+},
+  dom: {
+    createContainer: true
+},
 };
 
 export default new Phaser.Game(config);
