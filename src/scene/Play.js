@@ -13,15 +13,57 @@ export default class Play extends Phaser.Scene {
     this.data = Phaser.Utils.Array.Shuffle([
       1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6,
     ]);
+
+    this.isPlay = false;
     this.activeList = [];
     this.score = 0;
+    this.timeCountDown = 90;
 
     this.createHeader();
     this.createCards();
+
+    this.handleGameStart();
+  }
+
+  handleGameStart() {
+    this.createDialog("Ấn Chơi để bắt đầu", "Bạn có 90 giây...", ["Chơi"])
+      .setPosition(width / 2, height / 2)
+      .layout()
+      .modalPromise({
+        // defaultBehavior: false,
+        manaulClose: true,
+        duration: {
+          in: 500,
+          out: 500,
+        },
+      })
+      .then((data) => {
+        if (data.index == 0) {
+          this.isPlay = true;
+          setInterval(() => {
+            if (this.isPlay) {
+              this.timeCountDown--;
+              this.labelTime.setText(this.timeCountDown);
+              if (this.timeCountDown == 0 || this.score == 60) {
+                this.handleGameOver();
+              }
+            }
+          }, 1000);
+        }
+      });
   }
 
   handleGameOver() {
-    this.createDialog()
+    this.isPlay = false;
+    this.createDialog(
+      "Trò chơi kết thúc",
+      this.score == 60
+        ? `Chúc mừng bạn đã hoàn thành trò chơi trong ${
+            90 - this.timeCountDown
+          } giây`
+        : "Cố gắng vào lần sau nhé",
+      ["Chơi lại"]
+    )
       .setPosition(width / 2, height / 2)
       .layout()
       .modalPromise({
@@ -67,6 +109,26 @@ export default class Play extends Phaser.Scene {
       })
       .setPosition(80, 40)
       .layout();
+
+    this.labelTime = this.rexUI.add
+      .label({
+        background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 20, 0xffffff),
+        text: this.add.text(0, 0, this.timeCountDown, {
+          fontSize: 40,
+          color: "#000",
+        }),
+        icon: this.add.image(0, 0, "time"),
+        iconSize: 30,
+        space: {
+          left: 16,
+          right: 16,
+          top: 8,
+          bottom: 8,
+          icon: 10,
+        },
+      })
+      .setPosition(width - 80, 40)
+      .layout();
   }
 
   createCards() {
@@ -86,7 +148,7 @@ export default class Play extends Phaser.Scene {
     });
   }
 
-  createDialog() {
+  createDialog(title, content, buttons) {
     const dialog = this.rexUI.add
       .dialog({
         background: this.rexUI.add.roundRectangle(0, 0, 100, 100, 20, 0x1565c0),
@@ -99,7 +161,7 @@ export default class Play extends Phaser.Scene {
             20,
             0x003c8f
           ),
-          text: this.add.text(0, 0, "Bạn đã chiến thắng", {
+          text: this.add.text(0, 0, title, {
             fontSize: "24px",
           }),
           space: {
@@ -110,11 +172,12 @@ export default class Play extends Phaser.Scene {
           },
         }),
 
-        content: this.add.text(0, 0, "Chúc mừng bạn!", {
+        content: this.add.text(0, 0, content, {
           fontSize: "24px",
+          wordWrap: { width: 300 },
         }),
 
-        actions: [this.createLabel("Chơi lại")],
+        actions: [...buttons.map((item) => this.createLabel(item))],
 
         space: {
           title: 25,

@@ -15,6 +15,7 @@ export default class Preload extends Phaser.Scene {
     }
     this.load.image("card-back", "images/card-back.png");
     this.load.image("gold", "images/gold.png");
+    this.load.image("time", "images/time.png");
     this.load.addFile(new WebFontFile(this.load, fontFamily));
   }
 
