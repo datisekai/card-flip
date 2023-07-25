@@ -16,13 +16,22 @@ export default class Play extends Phaser.Scene {
 
     this.isPlay = false;
     this.activeList = [];
+
     this.score = 0;
     this.timeCountDown = 90;
-
     this.createHeader();
     this.createCards();
-
+    
+    this.music = this.loadAudio()
+    
     this.handleGameStart();
+
+  }
+
+  loadAudio() {
+    const music = this.sound.add('backgroundMusic');
+    music.play()
+    return music
   }
 
   handleGameStart() {
